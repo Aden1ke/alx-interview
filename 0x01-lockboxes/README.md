@@ -1,0 +1,1 @@
+solid understanding on python
