@@ -1,49 +1,58 @@
-#!/usr/bin/env python3
-
+#!/usr/bin/python3
+"""
+    N-queen
+"""
 import sys
 
-def is_safe(board, row, col):
-    """
-    Check if it's safe to place a queen at board[row][col]
-    This means checking the column, and both diagonals
-    """
-    for i in range(row):
-        if board[i] == col or \
-           board[i] - i == col - row or \
-           board[i] + i == col + row:
-            return False
-    return True
 
-def solve_nqueens(board, row, n):
+def n_q(t_arr, arr, col, i, n):
     """
-    Use backtracking to find all solutions to the n queens problem
+       Find all posibles solution for N-queen problem and return it
     """
-    if row == n:
-        print([[i, board[i]] for i in range(n)])
-        return
+    if (i > n):
+        arr.append(t_arr[:])
+        return arr
 
-    for col in range(n):
-        if is_safe(board, row, col):
-            board[row] = col
-            solve_nqueens(board, row + 1, n)
+    for j in range(n + 1):
+        if i == 0 or ([i - 1, j - 1] not in t_arr and
+                      [i - 1, j + 1] not in t_arr and
+                      j not in col):
+            if i > 1:
+                dia = 0
+                for k in range(2, i + 1):
+                    if ([i - k, j - k] in t_arr) or ([i - k, j + k] in t_arr):
+                        dia = 1
+                        break
+                if dia:
+                    continue
+            t_arr.append([i, j])
+            col.append(j)
+            n_q(t_arr, arr, col, i + 1, n)
+            col.pop()
+            t_arr.pop()
 
-def main():
-    """
-    Main function to parse input and call the solver
-    """
+    return arr
+
+
+if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
-        sys.exit(1)
+        exit(1)
 
     try:
         n = int(sys.argv[1])
-    except ValueError:
+    except BaseException:
         print("N must be a number")
-        sys.exit(1)
+        exit(1)
 
-    if n < 4:
+    if not isinstance(n, int):
+        print("N must be a number")
+        exit(1)
+
+    elif n < 4:
         print("N must be at least 4")
-        sys.exit(1)
+        exit(1)
 
-    board = [-1] * n
-    solve_nqueens(board, 0, n)
+    n_q_arr = n_q([], [], [], 0, n - 1)
+    for i in n_q_arr:
+        print(i)
